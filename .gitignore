@@ -1,0 +1,4 @@
+/node/images/*
+/node/server/node_modules/*
+node/server/package-lock.json
+node/server/package.json
