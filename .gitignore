@@ -1,4 +1,13 @@
 /node/images/*
 /node/server/node_modules/*
-node/server/package-lock.json
-node/server/package.json
+/node/server/package-lock.json
+/node/server/package.json
+/python/classes/advanced_colors.py
+/python/classes/benchmark.py
+/python/classes/classic_colors.py
+/python/classes/command_line_arguments.py
+/python/classes/constants.py
+/python/classes/custom_colors.py
+/python/classes/everything_datatype.py
+/python/classes/testing_results.py
+*.pem
