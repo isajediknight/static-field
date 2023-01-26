@@ -1,3 +1,6 @@
+# Example of how to run these unit tests
+# python3 test_server.py -set-verbosity 0 -show-results-for both -pass-fail-message number -server-url 10.87.1.125:4000
+
 # Basic modules
 import datetime,os,sys,unittest,time
 
@@ -151,6 +154,82 @@ if(set_verbosity == 0):
 if(parameter_messages != ""):
     print(parameter_messages)
 
+def file_directory_check(this_value):
+    if(type(this_value) != type(None)):
+        file_check = os.path.isfile(this_value)
+    else:
+        file_check = False
+
+    # See if it is an absolute file path
+    if (OS_TYPE == 'windows'):
+        if(os.path.isfile(os.getcwd() + '\\' + str(this_value))):
+            file_check = True
+        elif (file_check):
+            relative_path = True
+
+        # Is it a relative or an absolute directory
+        if(os.path.isdir(os.getcwd() + '\\' + str(this_value))):
+            dir_check = True
+        elif (os.path.isdir(str(this_value))):
+            dir_check = True
+            relative_path = True
+
+        # Human readable text output
+        if(file_check and not relative_path):
+            value_type = "Relative Path to File"
+            relative_path_to_file = True
+            parameter_type = 'file'
+        elif(file_check and relative_path):
+            value_type = "Abosulte Path to File"
+            absolute_path_to_file = True
+            parameter_type = 'file'
+        elif(dir_check and not relative_path):
+            value_type = "Relative Path to Directory"
+            relative_path_to_directory = True
+            parameter_type = 'directory'
+        elif(dir_check and relative_path):
+            value_type = "Absolute Path to Directory"
+            absolute_path_to_directory = True
+            parameter_type = 'directory'
+        else:
+            value_type = "Neither"
+
+    # mac or Linux
+    else:
+        if (os.path.isfile(os.getcwd() + '/' + str(this_value))):
+            file_check = True
+        elif(file_check):
+            relative_path = True
+
+        # Is it a relative or an absolute directory
+        if (os.path.isdir(os.getcwd() + '/' + str(this_value))):
+            dir_check = True
+        elif (os.path.isdir(str(this_value))):
+            dir_check = True
+            relative_path = True
+
+        # Human readable text output
+        if (file_check and not relative_path):
+            value_type = "Relative Path to File"
+            relative_path_to_file = True
+            parameter_type = 'file'
+        elif (file_check and relative_path):
+            value_type = "Abosulte Path to File"
+            absolute_path_to_file = True
+            parameter_type = 'file'
+        elif (dir_check and not relative_path):
+            value_type = "Relative Path to Directory"
+            relative_path_to_directory = True
+            parameter_type = 'directory'
+        elif (dir_check and relative_path):
+            value_type = "Absolute Path to Directory"
+            absolute_path_to_directory = True
+            parameter_type = 'directory'
+        else:
+            value_type = "Neither"
+
+    return file_check,parameter_type
+
 class TestAPIClass(unittest.TestCase):
 
     def test_benchmark_class_initializes_variables_to_zero(self):
@@ -182,13 +261,59 @@ class TestAPIClass(unittest.TestCase):
         unit_sub_test = TestResults(description, actual_comparison, "curl -s "+server_url+" > " + path_to_file)
         all_tests_list.append(unit_sub_test)
         if(set_verbosity != 0):
-            assert (actual_comparison)
+            assert(actual_comparison)
 
     def test_404_page(self):
+
+        # Remove the previously created file
+        try:
+            os.remove(OUTPUTS_DIR + "404.txt")
+        except:
+            pass
+
         # the -k makes it trust self signed certificates
         # REMINDER create tests for real certificates
         # REMINDER create test for both http and https
-        os.system("curl -s -k -w '%{response_code}' -s -o /dev/null " + '"https://'+str(server_url)+'/this_page_does_not_exist3534" > ' + OUTPUTS_DIR + "404.txt")
+        curl_command = "curl -s -k -w '%{response_code}' -s -o /dev/null " + '"https://'+str(server_url)+'/this_page_does_not_exist3534" > ' + OUTPUTS_DIR + "404.txt"
+        os.system(curl_command)
+
+        file_check,parameter_type = file_directory_check(OUTPUTS_DIR + "404.txt")
+        if(file_check == True and parameter_type == 'file'):
+            actual_comparison = True
+        else:
+            actual_comparison = False
+
+        description = tableau_10_blue.colored('curl') + " download of " + tableau_10_purple.colored('"https://' + str(server_url) + '/this_page_does_not_exist3534"')
+        description += " in " + tableau_10_orange.colored('use_express.js')
+        unit_sub_test = TestResults(description, actual_comparison, curl_command)
+        all_tests_list.append(unit_sub_test)
+        if(set_verbosity != 0):
+            assert (actual_comparison)
+
+        # This file should only have the response code
+        readfile = open(OUTPUTS_DIR + "404.txt",'r')
+        for line in readfile:
+            value = line
+        readfile.close()
+
+        try:
+            value = int(line.strip())
+        except:
+            value = -1
+
+        if(value == 404):
+            actual_comparison = True
+            value_to_print = tableau_10_green.colored('404')
+        else:
+            actual_comparison = False
+            value_to_print = tableau_10_red.colored(str(value))
+
+        description = "Page: " + tableau_10_purple.colored('/this_page_does_not_exist3534')
+        description += " in " + tableau_10_orange.colored('use_express.js') + " had a status code of: " + value_to_print
+        unit_sub_test = TestResults(description, actual_comparison, curl_command)
+        all_tests_list.append(unit_sub_test)
+        if (set_verbosity != 0):
+            assert (actual_comparison)
 
     def test_print_all_test_results(self):
         """
