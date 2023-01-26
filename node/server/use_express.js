@@ -52,14 +52,15 @@ app.get('/show-user-agent', (req, res) => {
 
 app.get('/pug-test', (req, res) => {
   res.set('Content-Type', 'text/html')
-  res.status(200).render('index', { title: 'Hey', message: 'Hello there!' })
+  res.status(200).render('index', { title: 'Pug View Test', message: 'Pug views work!' })
   print_debug_to_console(req)
 });
 
 // Catches all pages which don't exist
 app.get('*', function(req, res){
   res.set('Content-Type', 'text/html')
-  res.status(404).send('Page Not Found')
+  //res.status(404).send('Page Not Found')
+  res.status(404).render('index', { title: 'Page Not Found', message: 'This page does not exist on the server.  Please recheck the URL you are trying to access.' })
   print_debug_to_console(req)
 });
 
