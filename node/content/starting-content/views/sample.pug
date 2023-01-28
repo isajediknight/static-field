@@ -3,12 +3,54 @@ html
     title= title
     link(rel='icon' type='image/x-icon' href='/favicon.ico')
     link(rel='stylesheet' type="text/css" href='/style.css')
+    link(rel='stylesheet' type="text/css" href='/selected_content_style.css')
   body
 
-    div.menu-outer
-        div.menu-inner
+    div.body-outer-outer
+        div.body-outer-inner
+            div.body-inner-outer
+                div.body-inner-inner
+                    div.body
 
-    h1= message
-    <br />
-    h2 "This is text inside the H2"
-    h3 This is text inside the H3
+                        div.header-outer-outer
+                            div.header-outer-inner
+                                div.header-inner-outer
+                                    div.header-inner-inner
+                                        div.header
+
+                                            if Object.keys(top_menu_dict).length > 0
+                                                ul
+                                                    each menu_url, menu_value in top_menu_dict
+                                                        li
+                                                            a(href=`${menu_url}`)
+                                                                span #{menu_value}
+
+
+                        div.top-menu-outer-outer
+                            div.top-menu-outer-inner
+                                div.top-menu-inner-outer
+                                    div.top-menu-inner-inner
+                                        div.top-menu
+
+                        h1= message
+                        <br />
+                        h2 "This is text inside the H2"
+                        h3 This is text inside the H3
+
+                        div.bottom-menu-outer-outer
+                            div.bottom-menu-outer-inner
+                                div.bottom-menu-inner-outer
+                                    div.bottom-menu-inner-inner
+                                        div.bottom-menu
+
+                        div.footer-outer-outer
+                            div.footer-outer-inner
+                                div.footer-inner-outer
+                                    div.footer-inner-inner
+                                        div.footer
+                                            if Object.keys(bottom_menu_dict).length > 0
+                                                ul
+                                                    each menu_url, menu_value in bottom_menu_dict
+                                                        li
+                                                            a(href=`${menu_url}`)
+                                                                span #{menu_value}
