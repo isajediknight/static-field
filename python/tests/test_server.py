@@ -74,6 +74,7 @@ my_args.add_expectation('-set-verbosity','integer',True,False)
 my_args.add_expectation('-show-results-for','string',True,False)
 my_args.add_expectation('-pass-fail-message','string',True,False)
 my_args.add_expectation('-server-url','string',True,False)
+my_args.add_expectation('-node-server-file','string',True,False)
 my_args.parse_commandline()
 my_args.validate_requirements()
 
@@ -142,6 +143,19 @@ except:
 finally:
     if(server_url not in ['localhost:4000','10.87.1.125:4000']):
         parameter_messages += "\n -server-url can be set to 'localhost:4000' or '10.87.1.125:4000'\n"
+
+try:
+    if('-node-server-file' in list(my_args.get_parameter_names())):
+        node_server_file = my_args.get_parameter('-node-server-file').get_value()
+    else:
+        node_server_file = 'use_express.js'
+        parameter_messages += "\n -node-server-file was not passed in\n"
+        parameter_messages += " -node-server-file was set to 'use_express.js'\n"
+except:
+    node_server_file = 'use_express.js'
+#finally:
+#    if(server_url not in ['localhost:4000','10.87.1.125:4000']):
+#        parameter_messages += "\n -server-url can be set to 'localhost:4000' or '10.87.1.125:4000'\n"
 
 if(set_verbosity == 0):
 
@@ -232,23 +246,6 @@ def file_directory_check(this_value):
 
 class TestAPIClass(unittest.TestCase):
 
-    def test_benchmark_class_initializes_variables_to_zero(self):
-        # Create an instance of Benchmark Class
-        unit_test = Benchmark()
-
-        try:
-            check = 'unit_test.get_seconds() == 0'
-            actual_comparison = (unit_test.get_seconds() == 0)
-        except:
-            actual_comparison = False
-        description = tableau_10_blue.colored('getter') + " for " + tableau_10_purple.colored('seconds') + " in " + tableau_10_orange.colored('Benchmark')
-        unit_sub_test = TestResults(description, actual_comparison, check)
-        all_tests_list.append(unit_sub_test)
-        if(set_verbosity != 0):
-            assert(actual_comparison)
-
-        unit_test.stop()
-
     def test_download_home_page(self):
         path_to_file = OUTPUTS_DIR + "home_page.html"
         fully_qualified_url = server_url
@@ -314,6 +311,138 @@ class TestAPIClass(unittest.TestCase):
         all_tests_list.append(unit_sub_test)
         if (set_verbosity != 0):
             assert (actual_comparison)
+
+    def test_home_page(self):
+
+        # Remove the previously created file
+        try:
+            os.remove(OUTPUTS_DIR + "home.txt")
+        except:
+            pass
+
+        # the -k makes it trust self signed certificates
+        # REMINDER create tests for real certificates
+        # REMINDER create test for both http and https
+        curl_command = "curl -s -k -w '%{response_code}' -s -o /dev/null " + '"https://'+str(server_url)+'" > ' + OUTPUTS_DIR + "home.txt"
+        os.system(curl_command)
+
+        file_check,parameter_type = file_directory_check(OUTPUTS_DIR + "home.txt")
+        if(file_check == True and parameter_type == 'file'):
+            actual_comparison = True
+        else:
+            actual_comparison = False
+
+        description = tableau_10_blue.colored('curl') + " download of " + tableau_10_purple.colored('"https://' + str(server_url) + '"')
+        description += " in " + tableau_10_orange.colored('use_express.js')
+        unit_sub_test = TestResults(description, actual_comparison, curl_command)
+        all_tests_list.append(unit_sub_test)
+        if(set_verbosity != 0):
+            assert (actual_comparison)
+
+        # This file should only have the response code
+        readfile = open(OUTPUTS_DIR + "home.txt",'r')
+        for line in readfile:
+            value = line
+        readfile.close()
+
+        try:
+            value = int(line.strip())
+        except:
+            value = -1
+
+        if(value == 200):
+            actual_comparison = True
+            value_to_print = tableau_10_green.colored('200')
+        else:
+            actual_comparison = False
+            value_to_print = tableau_10_red.colored(str(value))
+
+        description = "Page: " + tableau_10_purple.colored('/')
+        description += " in " + tableau_10_orange.colored('use_express.js') + " had a status code of: " + value_to_print
+        unit_sub_test = TestResults(description, actual_comparison, curl_command)
+        all_tests_list.append(unit_sub_test)
+        if (set_verbosity != 0):
+            assert (actual_comparison)
+
+    def test_all_hosted_pages(self):
+        #app.get('
+
+        pages_to_check = []
+        readfile = open('../../node/server/' + node_server_file ,'r')
+        for line in readfile:
+            if "app.get('" in line:
+                locs = list(find_all(line,"'"))
+                if(line[locs[0]+1:locs[1]] == "*"):
+                    pass
+                elif(line[locs[0]+1:locs[1]] == "/"):
+                    pass
+                else:
+                    pages_to_check.append(line[locs[0]+1:locs[1]])
+
+
+        for page in pages_to_check:
+            # Remove the previously created file
+            try:
+                if(page == "/"):
+                    page = "/home"
+                os.remove(OUTPUTS_DIR + page + ".txt")
+            except:
+                pass
+
+            # the -k makes it trust self signed certificates
+            # REMINDER create tests for real certificates
+            # REMINDER create test for both http and https
+            curl_command = "curl -s -k -w '%{response_code}' -s -o /dev/null " + '"https://' + str(server_url) +page+'" > ' + OUTPUTS_DIR + page + ".txt"
+            os.system(curl_command)
+
+            file_check, parameter_type = file_directory_check(OUTPUTS_DIR + page + ".txt")
+            if (file_check == True and parameter_type == 'file'):
+                actual_comparison = True
+            else:
+                actual_comparison = False
+
+            description = tableau_10_blue.colored('curl') + " download of " + tableau_10_purple.colored('"https://' + str(server_url) + '/' + page)
+            description += " in " + tableau_10_orange.colored('use_express.js')
+            unit_sub_test = TestResults(description, actual_comparison, curl_command)
+            all_tests_list.append(unit_sub_test)
+            if (set_verbosity != 0):
+                assert (actual_comparison)
+
+            # This file should only have the response code
+            readfile = open(OUTPUTS_DIR + page + ".txt", 'r')
+            for line in readfile:
+                value = line
+            readfile.close()
+            del readfile
+
+            try:
+                value = int(line.strip())
+            except:
+                value = -1
+
+            if (value == 200):
+                actual_comparison = True
+                value_to_print = tableau_10_green.colored('200')
+            elif(value == 404):
+                actual_comparison = True
+                value_to_print = tableau_10_red.colored('404')
+            else:
+                actual_comparison = False
+                value_to_print = tableau_10_red.colored(str(value))
+
+            description = "Page: " + tableau_10_purple.colored(page)
+            description += " in " + tableau_10_orange.colored('use_express.js') + " had a status code of: " + value_to_print
+            unit_sub_test = TestResults(description, actual_comparison, curl_command)
+            all_tests_list.append(unit_sub_test)
+            if (set_verbosity != 0):
+                assert (actual_comparison)
+
+
+
+
+
+
+
 
     def test_print_all_test_results(self):
         """
