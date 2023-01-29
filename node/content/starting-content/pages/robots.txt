@@ -1,0 +1,3 @@
+Disallow: /login/
+Disallow: /auth/
+Disallow: /logout/
