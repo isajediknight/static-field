@@ -5,11 +5,18 @@ const app = express();
 var fs = require('fs');
 var useragent = require('express-useragent');
 
+// Menus
 const menus = ['top','bottom','left','right'];
-const top_menu = {Home: "/",Fun: "/fun",UserAgent: "/user-agent",PugTest: "/pug-test"};
-const bottom_menu = {PugTest: "/pug-test"};
-const left_menu = [];
-const right_menu = [];
+const top_menu = {Top: "/top"};
+const bottom_menu = {Bottom: "/bottom"};
+const left_menu = {Left: "/left"};
+const right_menu = {right: "/right"};
+
+// Content
+style_page_name = "";
+left_content = "Left Content"
+middle_content = "Middle Content"
+right_content = "Right Content"
 
 function print_debug_to_console(req) {
   //console.log(getOs(req.header('User-Agent')))
@@ -44,35 +51,90 @@ app.use('/selected_content_style.css', express.static('../content/starting-conte
 app.use(useragent.express());
 
 app.get('/', (req, res) => {
+  style_page_name = "page-home"
   res.set('Content-Type', 'text/html')
-  res.status(200).render('sample', { title: 'Pug View Test', message: 'Main Page',top_menu_dict: top_menu, bottom_menu_dict: bottom_menu })
+  res.status(200).render('sample', {title: 'Pug View Test',
+                                    message: 'Home Page',
+                                    top_menu,
+                                    bottom_menu,
+                                    left_menu,
+                                    right_menu,
+                                    right_content,
+                                    middle_content,
+                                    left_content,
+                                    style_page_name
+                                   })
   print_debug_to_console(req)
 });
 
 app.get('/fun', (req, res) => {
+  style_page_name = "page-fun"
   res.set('Content-Type', 'text/html')
-  res.status(200).render('sample', { title: 'Pug View Test', message: 'Pug views work!',top_menu_dict: top_menu, bottom_menu_dict: bottom_menu })
+  res.status(200).render('sample', {title: 'Pug View Test',
+                                    message: 'Pug views work!',
+                                    top_menu,
+                                    bottom_menu,
+                                    left_menu,
+                                    right_menu,
+                                    right_content,
+                                    middle_content,
+                                    left_content,
+                                    style_page_name
+                                   })
   print_debug_to_console(req)
 });
 
 
 app.get('/user-agent', (req, res) => {
+  style_page_name = "page-user-agent"
   res.set('Content-Type', 'text/html')
-  res.status(200).render('sample', { title: 'Pug View Test', message: req.useragent,top_menu_dict: top_menu, bottom_menu_dict: bottom_menu })
+  res.status(200).render('sample', {title: 'Pug View Test',
+                                    message: req.useragent,
+                                    top_menu,
+                                    bottom_menu,
+                                    left_menu,
+                                    right_menu,
+                                    right_content,
+                                    middle_content,
+                                    left_content,
+                                    style_page_name
+                                   })
   print_debug_to_console(req)
 });
 
 app.get('/pug-test', (req, res) => {
+  style_page_name = "page-pug-test"
   res.set('Content-Type', 'text/html')
-  res.status(200).render('sample', { title: 'Pug View Test', message: 'Pug views work!',top_menu_dict: top_menu, bottom_menu_dict: bottom_menu })
+  res.status(200).render('sample', { title: 'Pug View Test',
+                                    message: 'Pug views work!',
+                                    top_menu,
+                                    bottom_menu,
+                                    left_menu,
+                                    right_menu,
+                                    right_content,
+                                    middle_content,
+                                    left_content,
+                                    style_page_name
+                                   })
   print_debug_to_console(req)
 });
 
 // Catches all pages which don't exist
 app.get('*', function(req, res){
+  style_page_name = "page-page-not-found"
   res.set('Content-Type', 'text/html')
   //res.status(404).send('Page Not Found')
-  res.status(404).render('sample', { title: 'Page Not Found', message: 'This page does not exist on the server.  Please recheck the URL you are trying to access.',top_menu_dict: top_menu })
+  res.status(404).render('sample', {title: 'Page Not Found',
+                                    message: 'This page does not exist on the server.  Please recheck the URL you are trying to access.',
+                                    top_menu,
+                                    bottom_menu,
+                                    left_menu,
+                                    right_menu,
+                                    right_content,
+                                    middle_content,
+                                    left_content,
+                                    style_page_name
+                                   })
   print_debug_to_console(req)
 });
 
