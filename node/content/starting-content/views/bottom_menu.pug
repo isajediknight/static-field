@@ -1,0 +1,11 @@
+if Object.keys(bottom_menu).length > 0
+ div.bottom-menu-outer-outer
+  div.bottom-menu-outer-inner
+   div.bottom-menu-inner-outer
+    div.bottom-menu-inner-inner
+     div.bottom-menu
+      ul
+       each menu_url, menu_value in bottom_menu
+        li
+         a(href=`${menu_url}`)
+          span #{menu_value}

@@ -5,99 +5,25 @@ html
   link(rel='stylesheet' type="text/css" href='/style.css')
   link(rel='stylesheet' type="text/css" href='/selected_content_style.css')
  body(class=(style_page_name.length > 0  ? style_page_name : 'page-name-failure'))
-  block first_try
-  div.body-outer-outer
-   div.body-outer-inner
-    div.body-inner-outer
-     div.body-inner-inner
-      div.body
-       div.header-outer-outer
-        div.header-outer-inner
-         div.header-inner-outer
-          div.header-inner-inner
-           div.header
-            if Object.keys(top_menu).length > 0
-             div.top-menu-outer-outer
-              div.top-menu-outer-inner
-               div.top-menu-inner-outer
-                div.top-menu-inner-inner
-                 div.top-menu
-                  ul
-                   each menu_url, menu_value in top_menu
-                    li
-                     a(href=`${menu_url}`)
-                      span #{menu_value}
-       div.main-content-middle-outer-outer
-        div.main-content-middle-outer-inner
-         div.main-content-middle-inner-outer
-          div.main-content-middle-inner-inner
-           div.main-content-middle
-            if Object.keys(left_menu).length > 0 || left_content.length > 0
-             div.left-content-outer-outer
-              div.left-content-outer-inner
-               div.left-content-inner-outer
-                div.left-content-inner-inner
-                 div.left-content
-                  if Object.keys(left_menu).length > 0
-                   div.left-menu-outer-outer
-                    div.left-menu-outer-inner
-                     div.left-menu-inner-outer
-                      div.left-menu-inner-inner
-                       div.left-menu
-                        ul
-                         each menu_url, menu_value in left_menu
-                          li
-                           a(href=`${menu_url}`)
-                            span #{menu_value}
-                  if left_content.length > 0
-                   div#left-content
-                    span= left_content
-            if middle_content.length > 0
-             div.middle-content-outer-outer
-              div.middle-content-outer-inner
-               div.middle-content-inner-outer
-                div.middle-content-inner-inner
-                 div.middle-content
-                  if middle_content.length > 0
-                   div#middle-content
-                    span= middle_content
-                 h1= message
-                 <br />
-                 h2 "This is text inside the H2"
-                 h3 This is text inside the H3
-            if Object.keys(right_menu).length > 0 || right_content.length > 0
-             div.right-content-outer-outer
-              div.right-content-outer-inner
-               div.right-content-inner-outer
-                div.right-content-inner-inner
-                 div.right-content
-                  if Object.keys(right_menu).length > 0
-                   div.right-menu-outer-outer
-                    div.right-menu-outer-inner
-                     div.right-menu-inner-outer
-                      div.right-menu-inner-inner
-                       div.right-menu
-                        ul
-                         each menu_url, menu_value in right_menu
-                          li
-                           a(href=`${menu_url}`)
-                            span #{menu_value}
-                  if right_content.length > 0
-                   div#right-content
-                    span= right_content
-       div.footer-outer-outer
-        div.footer-outer-inner
-         div.footer-inner-outer
-          div.footer-inner-inner
-           div.footer
-            div.bottom-menu-outer-outer
-             div.bottom-menu-outer-inner
-              div.bottom-menu-inner-outer
-               div.bottom-menu-inner-inner
-                div.bottom-menu
-                 if Object.keys(bottom_menu).length > 0
-                  ul
-                   each menu_url, menu_value in bottom_menu
-                    li
-                     a(href=`${menu_url}`)
-                      span #{menu_value}
+  include body
+   include header
+    include top_menu
+   div.content
+    include main_content_middle_divs
+     include left_content_divs
+      include left_menu
+       if left_content.length > 0
+        div#left-content
+         span= left_content
+    include middle_content_divs
+     if middle_content.length > 0
+      div#middle-content
+       span= middle_content
+     h1= message
+    include right_content_divs
+     include right_menu
+      if right_content.length > 0
+       div#right-content
+        span= right_content
+   include footer
+    include bottom_menu

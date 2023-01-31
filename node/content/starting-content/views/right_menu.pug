@@ -1,0 +1,11 @@
+if Object.keys(right_menu).length > 0
+ div.right-menu-outer-outer
+  div.right-menu-outer-inner
+   div.right-menu-inner-outer
+    div.right-menu-inner-inner
+     div.right-menu
+      ul
+       each menu_url, menu_value in right_menu
+        li
+         a(href=`${menu_url}`)
+          span #{menu_value}
