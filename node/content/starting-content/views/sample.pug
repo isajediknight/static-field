@@ -10,11 +10,11 @@ html
     include top_menu
    div.content
     include main_content_middle_divs
-     include left_content_divs
-      include left_menu
-       if left_content.length > 0
-        div#left-content
-         span= left_content
+    include left_content_divs
+     include left_menu
+      if left_content.length > 0
+       div#left-content
+        span= left_content
     include middle_content_divs
      if middle_content.length > 0
       div#middle-content
