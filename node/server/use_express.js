@@ -20,7 +20,7 @@ right_content = "Right Content"
 
 function print_debug_to_console(req) {
   //console.log(getOs(req.header('User-Agent')))
-  console.log(req.url);
+  console.log(decodeURI(req.url));
   //console.log(JSON.stringify(req.useragent['browser']))
 }
 
@@ -107,6 +107,25 @@ app.get('/pug-test', (req, res) => {
   res.set('Content-Type', 'text/html')
   res.status(200).render('sample', { title: 'Pug View Test',
                                     message: 'Pug views work!',
+                                    top_menu,
+                                    bottom_menu,
+                                    left_menu,
+                                    right_menu,
+                                    right_content,
+                                    middle_content,
+                                    left_content,
+                                    style_page_name
+                                   })
+  print_debug_to_console(req)
+});
+
+app.get('/page/*', (req, res) => {
+  //.indexOf('static-field')
+  page_name = decodeURI(req.url.substring(6,req.url.length))
+  style_page_name = "page-page-" + page_name.replace(' ','-')
+  res.set('Content-Type', 'text/html')
+  res.status(200).render('sample', { title: 'Page',
+                                    message: page_name,
                                     top_menu,
                                     bottom_menu,
                                     left_menu,
