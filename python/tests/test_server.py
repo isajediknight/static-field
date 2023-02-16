@@ -1,5 +1,5 @@
 # Example of how to run these unit tests
-# python3 test_server.py -set-verbosity 0 -show-results-for both -pass-fail-message number -server-url 10.87.1.125:4000
+# python3 test_server.py -set-verbosity 0 -show-results-for both -pass-fail-message number -server-url 10.87.1.125:4000 -node-server-file use_express.js
 
 # Basic modules
 import datetime,os,sys,unittest,time
@@ -173,6 +173,7 @@ def file_directory_check(this_value):
         file_check = os.path.isfile(this_value)
     else:
         file_check = False
+    dir_check = False
 
     # See if it is an absolute file path
     if (OS_TYPE == 'windows'):
@@ -187,6 +188,8 @@ def file_directory_check(this_value):
         elif (os.path.isdir(str(this_value))):
             dir_check = True
             relative_path = True
+        else:
+            dir_check = False
 
         # Human readable text output
         if(file_check and not relative_path):
@@ -210,32 +213,34 @@ def file_directory_check(this_value):
 
     # mac or Linux
     else:
-        if (os.path.isfile(os.getcwd() + '/' + str(this_value))):
+        if(os.path.isfile(os.getcwd() + '/' + str(this_value))):
             file_check = True
         elif(file_check):
             relative_path = True
 
         # Is it a relative or an absolute directory
-        if (os.path.isdir(os.getcwd() + '/' + str(this_value))):
+        if(os.path.isdir(os.getcwd() + '/' + str(this_value))):
             dir_check = True
-        elif (os.path.isdir(str(this_value))):
+        elif(os.path.isdir(str(this_value))):
             dir_check = True
             relative_path = True
+        else:
+            dir_check = False
 
         # Human readable text output
-        if (file_check and not relative_path):
+        if(file_check and not relative_path):
             value_type = "Relative Path to File"
             relative_path_to_file = True
             parameter_type = 'file'
-        elif (file_check and relative_path):
+        elif(file_check and relative_path):
             value_type = "Abosulte Path to File"
             absolute_path_to_file = True
             parameter_type = 'file'
-        elif (dir_check and not relative_path):
+        elif(dir_check and not relative_path):
             value_type = "Relative Path to Directory"
             relative_path_to_directory = True
             parameter_type = 'directory'
-        elif (dir_check and relative_path):
+        elif(dir_check and relative_path):
             value_type = "Absolute Path to Directory"
             absolute_path_to_directory = True
             parameter_type = 'directory'
@@ -274,13 +279,14 @@ class TestAPIClass(unittest.TestCase):
         curl_command = "curl -s -k -w '%{response_code}' -s -o /dev/null " + '"https://'+str(server_url)+'/this_page_does_not_exist3534" > ' + OUTPUTS_DIR + "404.txt"
         os.system(curl_command)
 
+        description = tableau_10_blue.colored('curl') + " download of " + tableau_10_purple.colored('"https://'+str(server_url)+'/this_page_does_not_exist3534"')
+
         file_check,parameter_type = file_directory_check(OUTPUTS_DIR + "404.txt")
         if(file_check == True and parameter_type == 'file'):
             actual_comparison = True
         else:
             actual_comparison = False
 
-        description = tableau_10_blue.colored('curl') + " download of " + tableau_10_purple.colored('"https://' + str(server_url) + '/this_page_does_not_exist3534"')
         description += " in " + tableau_10_orange.colored('use_express.js')
         unit_sub_test = TestResults(description, actual_comparison, curl_command)
         all_tests_list.append(unit_sub_test)
@@ -376,73 +382,82 @@ class TestAPIClass(unittest.TestCase):
                     pass
                 elif(line[locs[0]+1:locs[1]] == "/"):
                     pass
+                if("/*" in line):
+                    star_loc = list(find_all(line,'/*'))[0]
+                    # REMINDER we get a server error if URL is not valid to decode
+                    #test_page = (line[0:star_loc+2] + 'made%20up%20page').replace("app.get('",'')
+                    #test_page = test_page.replace('*','')
+                    pages_to_check.append(line[0:star_loc+2] + 'made%20up%20page')
                 else:
                     pages_to_check.append(line[locs[0]+1:locs[1]])
 
 
         for page in pages_to_check:
             # Remove the previously created file
-            try:
-                if(page == "/"):
-                    page = "/home"
-                os.remove(OUTPUTS_DIR + page + ".txt")
-            except:
-                pass
 
-            # the -k makes it trust self signed certificates
-            # REMINDER create tests for real certificates
-            # REMINDER create test for both http and https
-            curl_command = "curl -s -k -w '%{response_code}' -s -o /dev/null " + '"https://' + str(server_url) +page+'" > ' + OUTPUTS_DIR + page + ".txt"
-            os.system(curl_command)
+            if(page != "" and page !="*"):
+                try:
+                    if(page == "/"):
+                        page = "/home"
+                    os.remove(OUTPUTS_DIR + page + ".txt")
+                except:
+                    pass
 
-            file_check, parameter_type = file_directory_check(OUTPUTS_DIR + page + ".txt")
-            if (file_check == True and parameter_type == 'file'):
-                actual_comparison = True
-            else:
-                actual_comparison = False
+                # the -k makes it trust self signed certificates
+                # REMINDER create tests for real certificates
+                # REMINDER create test for both http and https
+                if(page[0] != 'a'):
+                    temp_output_file = OUTPUTS_DIR + page[1:]
+                temp_output_file = temp_output_file.replace("app.get('",'')
+                if('*' in temp_output_file):
+                    temp_output_file = temp_output_file.replace('*','')
+                temp_page = page.replace("app.get('",'').replace('////','//')
+                if('*' in temp_page):
+                    temp_page = temp_page.replace('*','')
+                curl_command = "curl -s -k -w '%{response_code}' -s -o /dev/null " + '"https://' + str(server_url) +temp_page+'" > ' + temp_output_file + ".txt"
+                os.system(curl_command)
 
-            description = tableau_10_blue.colored('curl') + " download of " + tableau_10_purple.colored('"https://' + str(server_url) + '/' + page)
-            description += " in " + tableau_10_orange.colored('use_express.js')
-            unit_sub_test = TestResults(description, actual_comparison, curl_command)
-            all_tests_list.append(unit_sub_test)
-            if (set_verbosity != 0):
-                assert (actual_comparison)
+                file_check, parameter_type = file_directory_check(temp_output_file + ".txt")
+                if (file_check == True and parameter_type == 'file'):
+                    actual_comparison = True
+                else:
+                    actual_comparison = False
 
-            # This file should only have the response code
-            readfile = open(OUTPUTS_DIR + page + ".txt", 'r')
-            for line in readfile:
-                value = line
-            readfile.close()
-            del readfile
+                description = tableau_10_blue.colored('curl') + " download of " + tableau_10_purple.colored('"https://' + str(server_url) + temp_page)
+                description += " in " + tableau_10_orange.colored('use_express.js')
+                unit_sub_test = TestResults(description, actual_comparison, curl_command)
+                all_tests_list.append(unit_sub_test)
+                if (set_verbosity != 0):
+                    assert (actual_comparison)
 
-            try:
-                value = int(line.strip())
-            except:
-                value = -1
+                # This file should only have the response code
+                readfile = open(temp_output_file + ".txt", 'r')#OUTPUTS_DIR + page + ".txt", 'r')
+                for line in readfile:
+                    value = line
+                readfile.close()
+                del readfile
 
-            if (value == 200):
-                actual_comparison = True
-                value_to_print = tableau_10_green.colored('200')
-            elif(value == 404):
-                actual_comparison = True
-                value_to_print = tableau_10_red.colored('404')
-            else:
-                actual_comparison = False
-                value_to_print = tableau_10_red.colored(str(value))
+                try:
+                    value = int(line.strip())
+                except:
+                    value = -1
 
-            description = "Page: " + tableau_10_purple.colored(page)
-            description += " in " + tableau_10_orange.colored('use_express.js') + " had a status code of: " + value_to_print
-            unit_sub_test = TestResults(description, actual_comparison, curl_command)
-            all_tests_list.append(unit_sub_test)
-            if (set_verbosity != 0):
-                assert (actual_comparison)
+                if (value == 200):
+                    actual_comparison = True
+                    value_to_print = tableau_10_green.colored('200')
+                elif(value == 404):
+                    actual_comparison = True
+                    value_to_print = tableau_10_red.colored('404')
+                else:
+                    actual_comparison = False
+                    value_to_print = tableau_10_red.colored(str(value))
 
-
-
-
-
-
-
+                description = "Page: " + tableau_10_purple.colored(page).replace("app.get('",'').replace('*','')
+                description += " in " + tableau_10_orange.colored('use_express.js') + " had a status code of: " + value_to_print
+                unit_sub_test = TestResults(description, actual_comparison, curl_command)
+                all_tests_list.append(unit_sub_test)
+                if (set_verbosity != 0):
+                    assert (actual_comparison)
 
     def test_print_all_test_results(self):
         """
