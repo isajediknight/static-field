@@ -1,6 +1,31 @@
 
 const https = require("https");
 const express = require('express');
+
+// Colored Text Constants
+const ColoredText = require('./classes/coloredtext');
+const BLUE = new ColoredText('Tableau 10 Blue',31,119,180);
+const LIGHT_GREEN = new ColoredText('Tableau 20 Light Green',152,223,138);
+const BROWN = new ColoredText('Tableau 20 Brown',140,86,75);
+const GREY = new ColoredText('Tableau 20 Grey',199,199,199);
+const LIGHT_BLUE = new ColoredText('Tableau 20 Light Blue',174,199,232);
+const RED = new ColoredText('Tableau 20 Red',214,39,40);
+const LIGHT_BROWN = new ColoredText('Tableau 20 Light Brown',196,156,148);
+const YELLOW = new ColoredText('Tableau 20 Yellow',188,189,34);
+const ORANGE = new ColoredText('Tableau 20 Orange',255,127,14);
+const LIGHT_RED = new ColoredText('Tableau 20 Light Red',255,152,150);
+const PINK = new ColoredText('Tableau 20 Pink',227,119,194);
+const LIGHT_YELLOW = new ColoredText('Tableau 20 Light Yellow',219,219,141);
+const LIGHT_ORANGE = new ColoredText('Tableau 20 Light Orange',255,187,120);
+const PURPLE = new ColoredText('Tableau 20 Purple',148,103,189);
+const LIGHT_PINK = new ColoredText('Tableau 20 Light Pink',247,182,210);
+const BABY_BLUE = new ColoredText('Tableau 20 Baby Blue',23,190,207);
+const GREEN = new ColoredText('Tableau 20 Green',44,160,44);
+const LIGHT_PURPLE = new ColoredText('Tableau 20 Light Purple',197,176,213);
+const DARK_GREY = new ColoredText('Tableau 20 Dark Grey',127,127,127);
+const LIGHT_BABY_BLUE = new ColoredText('Tableau 20 Light Baby Blue',158,218,229);
+console.log('Not Blue ' + BLUE.to_string('This text is Blue'));
+
 const app = express();
 var fs = require('fs');
 var useragent = require('express-useragent');
