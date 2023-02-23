@@ -4,7 +4,7 @@ html
   link(rel='icon' type='image/x-icon' href='/favicon.ico')
   link(rel='stylesheet' type="text/css" href='/style.css')
   link(rel='stylesheet' type="text/css" href='/selected_content_style.css')
- body(class=(style_page_name.length > 0  ? style_page_name : 'page-name-failure'))
+ body(class=((style_page_name.length > 0  ? style_page_name : 'page-name-failure') + page_level_classes))
   include body
    include header
     include top_menu
