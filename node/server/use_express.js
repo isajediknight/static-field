@@ -24,7 +24,6 @@ const GREEN = new ColoredText('Tableau 20 Green',44,160,44);
 const LIGHT_PURPLE = new ColoredText('Tableau 20 Light Purple',197,176,213);
 const DARK_GREY = new ColoredText('Tableau 20 Dark Grey',127,127,127);
 const LIGHT_BABY_BLUE = new ColoredText('Tableau 20 Light Baby Blue',158,218,229);
-console.log('Not Blue ' + BLUE.to_string('This text is Blue'));
 
 const app = express();
 var fs = require('fs');
@@ -45,8 +44,76 @@ right_content = "Right Content"
 
 function print_debug_to_console(req) {
   //console.log(getOs(req.header('User-Agent')))
-  console.log(decodeURI(req.url));
-  //console.log(JSON.stringify(req.useragent['browser']))
+  //console.log(JSON.stringify(req.useragent))
+  var loc = req.ip.indexOf('::ffff:')
+  var ip = req.ip.substring(loc + 7,100)//(req.headers['x-forwarded-for'] || '').split(',')
+  output_string = GREY.to_string(decodeURI(req.url)) + ' ' + LIGHT_ORANGE.to_string(req.useragent.browser) + ' ' + LIGHT_ORANGE.to_string(req.useragent.version)
+  const semicolons = [];
+  var counter = 0
+  for (let char of req.useragent["source"]) {
+    if(char == ';') {
+      semicolons.push(counter);
+    }
+    counter += 1;
+  }
+  os_name = req.useragent["source"].substring(semicolons[0]+1,semicolons[1])
+  output_string += LIGHT_YELLOW.to_string(os_name)+ ' ' + LIGHT_YELLOW.to_string(req.useragent.os) + ' ' + BABY_BLUE.to_string(ip);
+  //console.log(decodeURI(req.url));
+  console.log(output_string);
+  //console.log(JSON.stringify(Object.keys(req.useragent)));
+}
+
+function add_user_agent_componets_to_page(req) {
+  var return_string = ' ';
+  if(req.useragent["isYaBrowser"]) { return_string += 'YaBrowser ';}
+  if(req.useragent["isAuthoritative"]) { return_string += 'Authoritative ';}
+  if(req.useragent["isMobile"]) { return_string += 'Mobile ';}
+  if(req.useragent["isMobileNative"]) { return_string += 'MobileNative ';}
+  if(req.useragent["isTablet"]) { return_string += 'Tablet ';}
+  if(req.useragent["isiPad"]) { return_string += 'iPad ';}
+  if(req.useragent["isiPod"]) { return_string += 'iPod ';}
+  if(req.useragent["isiPhone"]) { return_string += 'iPhone ';}
+  if(req.useragent["isiPhoneNative"]) { return_string += 'iPhoneNative ';}
+  if(req.useragent["isAndroid"]) { return_string += 'Android ';}
+  if(req.useragent["isAndroidNative"]) { return_string += 'AndroidNative ';}
+  if(req.useragent["isBlackberry"]) { return_string += 'Blackberry ';}
+  if(req.useragent["isOpera"]) { return_string += 'Opera ';}
+  if(req.useragent["isIE"]) { return_string += 'IE ';}
+  if(req.useragent["isIECompatibilityMode"]) { return_string += 'IECompatibilityMode ';}
+  if(req.useragent["isSafari"]) { return_string += 'Safari ';}
+  if(req.useragent["isFirefox"]) { return_string += 'Firefox ';}
+  if(req.useragent["isWebkit"]) { return_string += 'Webkit ';}
+  if(req.useragent["isChrome"]) { return_string += 'Chrome ';}
+  if(req.useragent["isKonqueror"]) { return_string += 'Konqueror ';}
+  if(req.useragent["isOmniWeb"]) { return_string += 'OmniWeb ';}
+  if(req.useragent["isSeaMonkey"]) { return_string += 'SeaMonkey ';}
+  if(req.useragent["isFlock"]) { return_string += 'Flock ';}
+  if(req.useragent["isAmaya"]) { return_string += 'Amaya ';}
+  if(req.useragent["isPhantomJS"]) { return_string += 'PhantomJS ';}
+  if(req.useragent["isEpiphany"]) { return_string += 'Epiphany ';}
+  if(req.useragent["isDesktop"]) { return_string += 'Desktop ';}
+  if(req.useragent["isWindows"]) { return_string += 'Windows ';}
+  if(req.useragent["isLinux"]) { return_string += 'Linux ';}
+  if(req.useragent["isLinux64"]) { return_string += 'Linux64 ';}
+  if(req.useragent["isMac"]) { return_string += 'Mac ';}
+  if(req.useragent["isChromeOS"]) { return_string += 'ChromeOS ';}
+  if(req.useragent["isBada"]) { return_string += 'Bada ';}
+  if(req.useragent["isSamsung"]) { return_string += 'Samsung ';}
+  if(req.useragent["isRaspberry"]) { return_string += 'Raspberry ';}
+  if(req.useragent["isBot"]) { return_string += 'Bot ';}
+  if(req.useragent["isCurl"]) { return_string += 'Curl ';}
+  if(req.useragent["isAndroidTablet"]) { return_string += 'AndroidTablet ';}
+  if(req.useragent["isWinJs"]) { return_string += 'WinJs ';}
+  if(req.useragent["isKindleFire"]) { return_string += 'KindleFire ';}
+  if(req.useragent["isSilk"]) { return_string += 'Silk ';}
+  if(req.useragent["isCaptive"]) { return_string += 'Captive ';}
+  if(req.useragent["isSmartTV"]) { return_string += 'SmartTV ';}
+  if(req.useragent["isUC"]) { return_string += 'UC ';}
+  if(req.useragent["isFacebook"]) { return_string += 'Facebook ';}
+  if(req.useragent["isAlamoFire"]) { return_string += 'AlamoFire ';}
+  if(req.useragent["isElectron"]) { return_string += 'Electron ';}
+  if(req.useragent["silkAccelerated"]) { return_string += 'silkAccelerated ';}
+  return return_string.toLowerCase();
 }
 
 // Used to get the Server IP Address for debugging
@@ -64,6 +131,9 @@ absolute_path_to_certificates = directory.substring(0,folder_str_loc) + 'static-
 app.set('views', absolute_path_to_pug_views);
 app.set('view engine', 'pug');
 
+// Get real IP Address
+app.set('trust proxy', true)
+
 // Favicon
 app.use('/favicon.ico', express.static('../themes/default/images/favicon.ico'));
 
@@ -76,8 +146,9 @@ app.use('/selected_content_style.css', express.static('../content/starting-conte
 app.use(useragent.express());
 
 app.get('/', (req, res) => {
-  style_page_name = "page-home"
-  res.set('Content-Type', 'text/html')
+  style_page_name = "page-home";
+  page_level_classes = add_user_agent_componets_to_page(req);
+  res.set('Content-Type', 'text/html');
   res.status(200).render('sample', {title: 'Pug View Test',
                                     message: 'Home Page',
                                     top_menu,
@@ -87,14 +158,16 @@ app.get('/', (req, res) => {
                                     right_content,
                                     middle_content,
                                     left_content,
-                                    style_page_name
-                                   })
-  print_debug_to_console(req)
+                                    style_page_name,
+                                    page_level_classes
+                                   });
+  print_debug_to_console(req);
 });
 
 app.get('/fun', (req, res) => {
-  style_page_name = "page-fun"
-  res.set('Content-Type', 'text/html')
+  style_page_name = "page-fun";
+  page_level_classes = add_user_agent_componets_to_page(req);
+  res.set('Content-Type', 'text/html');
   res.status(200).render('sample', {title: 'Pug View Test',
                                     message: 'Pug views work!',
                                     top_menu,
@@ -104,15 +177,17 @@ app.get('/fun', (req, res) => {
                                     right_content,
                                     middle_content,
                                     left_content,
-                                    style_page_name
-                                   })
-  print_debug_to_console(req)
+                                    style_page_name,
+                                    page_level_classes
+                                   });
+  print_debug_to_console(req);
 });
 
 
 app.get('/user-agent', (req, res) => {
-  style_page_name = "page-user-agent"
-  res.set('Content-Type', 'text/html')
+  style_page_name = "page-user-agent";
+  page_level_classes = add_user_agent_componets_to_page(req);
+  res.set('Content-Type', 'text/html');
   res.status(200).render('sample', {title: 'Pug View Test',
                                     message: req.useragent,
                                     top_menu,
@@ -122,14 +197,16 @@ app.get('/user-agent', (req, res) => {
                                     right_content,
                                     middle_content,
                                     left_content,
-                                    style_page_name
-                                   })
-  print_debug_to_console(req)
+                                    style_page_name,
+                                    page_level_classes
+                                   });
+  print_debug_to_console(req);
 });
 
 app.get('/pug-test', (req, res) => {
-  style_page_name = "page-pug-test"
-  res.set('Content-Type', 'text/html')
+  style_page_name = "page-pug-test";
+  page_level_classes = add_user_agent_componets_to_page(req);
+  res.set('Content-Type', 'text/html');
   res.status(200).render('sample', { title: 'Pug View Test',
                                     message: 'Pug views work!',
                                     top_menu,
@@ -139,16 +216,18 @@ app.get('/pug-test', (req, res) => {
                                     right_content,
                                     middle_content,
                                     left_content,
-                                    style_page_name
-                                   })
-  print_debug_to_console(req)
+                                    style_page_name,
+                                    page_level_classes
+                                   });
+  print_debug_to_console(req);
 });
 
 app.get('/page/*', (req, res) => {
   //.indexOf('static-field')
-  page_name = decodeURI(req.url.substring(6,req.url.length))
-  style_page_name = "page-page-" + page_name.replace(' ','-')
-  res.set('Content-Type', 'text/html')
+  page_name = decodeURI(req.url.substring(6,req.url.length));
+  style_page_name = "page-page-" + page_name.replace(' ','-');
+  page_level_classes = add_user_agent_componets_to_page(req);
+  res.set('Content-Type', 'text/html');
   res.status(200).render('sample', { title: 'Page',
                                     message: page_name,
                                     top_menu,
@@ -158,15 +237,17 @@ app.get('/page/*', (req, res) => {
                                     right_content,
                                     middle_content,
                                     left_content,
-                                    style_page_name
-                                   })
-  print_debug_to_console(req)
+                                    style_page_name,
+                                    page_level_classes
+                                   });
+  print_debug_to_console(req);
 });
 
 // Catches all pages which don't exist
 app.get('*', function(req, res){
-  style_page_name = "page-page-not-found"
-  res.set('Content-Type', 'text/html')
+  style_page_name = "page-page-not-found";
+  page_level_classes = add_user_agent_componets_to_page(req);
+  res.set('Content-Type', 'text/html');
   //res.status(404).send('Page Not Found')
   res.status(404).render('sample', {title: 'Page Not Found',
                                     message: 'This page does not exist on the server.  Please recheck the URL you are trying to access.',
@@ -177,9 +258,10 @@ app.get('*', function(req, res){
                                     right_content,
                                     middle_content,
                                     left_content,
-                                    style_page_name
-                                   })
-  print_debug_to_console(req)
+                                    style_page_name,
+                                    page_level_classes
+                                   });
+  print_debug_to_console(req);
 });
 
 const PORT = 4000;
