@@ -1,0 +1,29 @@
+html
+ head(lang='en')
+  title= title
+  link(rel='icon' type='image/x-icon' href='/favicon.ico')
+  link(rel='stylesheet' type="text/css" href='/style.css')
+  link(rel='stylesheet' type="text/css" href='/selected_content_style.css')
+ body(class=((style_page_name.length > 0  ? style_page_name : 'page-name-failure') + page_level_classes))
+  include body
+   include header
+    include top_menu
+   div.content
+    include main_content_middle_divs
+    include left_content_divs
+     include left_menu
+      if left_content.length > 0
+       div#left-content
+        span= left_content
+    include middle_content_divs
+     if middle_content.length > 0
+      div#middle-content
+       span= middle_content
+     h1= message
+    include right_content_divs
+     include right_menu
+      if right_content.length > 0
+       div#right-content
+        span= right_content
+   include footer
+    include bottom_menu
