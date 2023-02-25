@@ -164,6 +164,25 @@ app.get('/', (req, res) => {
   print_debug_to_console(req);
 });
 
+app.get('/signin', (req, res) => {
+  style_page_name = "page-fun";
+  page_level_classes = add_user_agent_componets_to_page(req);
+  res.set('Content-Type', 'text/html');
+  res.status(200).render('phantom_signin', {title: 'Phantom Test Signin',
+                                    message: 'Hopefully you can successfully sign into your Phantom wallet',
+                                    top_menu,
+                                    bottom_menu,
+                                    left_menu,
+                                    right_menu,
+                                    right_content,
+                                    middle_content,
+                                    left_content,
+                                    style_page_name,
+                                    page_level_classes
+                                   });
+  print_debug_to_console(req);
+});
+
 app.get('/fun', (req, res) => {
   style_page_name = "page-fun";
   page_level_classes = add_user_agent_componets_to_page(req);
@@ -227,6 +246,7 @@ app.get('/page/*', (req, res) => {
   page_name = decodeURI(req.url.substring(6,req.url.length));
   style_page_name = "page-page-" + page_name.replace(' ','-');
   page_level_classes = add_user_agent_componets_to_page(req);
+  page_level_classes = page_level_classes.toLowerCase()
   res.set('Content-Type', 'text/html');
   res.status(200).render('sample', { title: 'Page',
                                     message: page_name,
@@ -247,6 +267,7 @@ app.get('/page/*', (req, res) => {
 app.get('*', function(req, res){
   style_page_name = "page-page-not-found";
   page_level_classes = add_user_agent_componets_to_page(req);
+  page_level_classes = page_level_classes.toLowerCase()
   res.set('Content-Type', 'text/html');
   //res.status(404).send('Page Not Found')
   res.status(404).render('sample', {title: 'Page Not Found',
@@ -277,7 +298,7 @@ https
     app
   )
   .listen(PORT, () => {
-    console.log('Server ready: ' + ip.address() + ':' + PORT.toString());
+    console.log(GREY.to_string('Server ready: ') + YELLOW.to_string(ip.address() + ':' + PORT.toString()));
   });
 
 // http Server
